@@ -6,7 +6,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     tty: true
-    command: yarn run-p start:dev db:studio
+    command: ./command.sh
     ports:
       - '3000:3000'
       - '5555:5555'
@@ -44,4 +44,4 @@ services:
       mkdir -p /data/.minio.sys/buckets;
       /opt/bin/minio server /data --console-address :33023;"
     volumes:
-      - ./minio:/data
+      - ./backend/minio:/data
