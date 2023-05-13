@@ -11,7 +11,7 @@ services:
       - '3000:3000'
       - '5555:5555'
     volumes:
-      - .:/backend
+      - ./backend:/backend
     depends_on:
       - mysql
     env_file:
