@@ -1,19 +1,30 @@
 version: '3.8'
 services:
-  app:
-    container_name: app
-    build: .
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     tty: true
-    command: yarn run-p start:dev db:studio
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./frontend:/frontend
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    tty: true
     ports:
       - '3000:3000'
       - '5555:5555'
     volumes:
-      - .:/app
+      - ./backend:/backend
     depends_on:
       - mysql
     env_file:
-      - ./prisma/.env
+      - ./backend/prisma/.env
 
   mysql:
     image: mysql
@@ -26,7 +37,7 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     volumes:
-      - ./prisma/data:/var/lib/mysql
+      - ./backend/prisma/data:/var/lib/mysql
 
   minio:
     image: minio/minio:latest
@@ -40,7 +51,6 @@ services:
     entrypoint: sh
     command: -c "
       mkdir -p /data/.minio.sys/buckets;
-      /opt/bin/minio server /data --console-address :33023;
-      "
+      /opt/bin/minio server /data --console-address :33023;"
     volumes:
-      - ./minio:/data
+      - ./backend/minio:/data
